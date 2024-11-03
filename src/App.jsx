@@ -50,7 +50,7 @@ export default function App() {
               return (
               ((category=="All"||product.type==category.toLowerCase())&&(product.name.includes(searchTerm.toLowerCase()))&&<section class={product.type}>
                 <h2>{product.name.charAt(0).toUpperCase()+product.name.slice(1)}</h2>
-                <p>${product.price}</p>
+                <p>${product.price.toFixed(2)}</p>
                 <img src={`/images/${product.image}`} alt={product.name}/>
               </section>))}
             )}
