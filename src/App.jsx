@@ -2,14 +2,23 @@ import {useEffect,useState} from "react";
 
 
 export default function App() {
-const [products,setProducts]=useState([]);
-useEffect(() => {
-  (async()=>{
-    const response=await fetch("products.json");
-    const data=await response.json();
-    setProducts(data);
-  })();
-},[]);
+  const [searchTerm,setSearchTerm]=useState("");
+  const [category,setCategory]= useState("All");
+  const [products,setProducts]=useState([]);
+  useEffect(() => {
+    (async()=>{
+      const response=await fetch("products.json");
+      const data=await response.json();
+      setProducts(data);
+    })();
+  },[]);
+  function handleSubmit(event){
+    event.preventDefault();
+    const newCategory=event.target.elements.category.value;
+    setCategory(newCategory);
+    const newSearchTerm=event.target.elements.searchTerm.value;
+    setSearchTerm(newSearchTerm);
+  }
     return (
       <>
         <header>
@@ -17,10 +26,10 @@ useEffect(() => {
         </header>
         <div>
           <aside>
-            <form>
+            <form onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="category">Choose a category:</label>
-                <select id="category">
+                <select name="category">
                   <option>All</option>
                   <option>Vegetables</option>
                   <option>Meat</option>
@@ -29,20 +38,21 @@ useEffect(() => {
               </div>
               <div>
                 <label htmlFor="searchTerm">Enter search term:</label>
-                <input type="text" id="searchTerm" placeholder="e.g. beans" />
+                <input type="text" name="searchTerm" placeholder="e.g. beans" />
               </div>
               <div>
-                <button>Filter results</button>
+                <button onSubmit={handleSubmit}>Filter results</button>
               </div>
             </form>
           </aside>
           <main>
-            {products.map((product)=>
-              <section class={product.type}>
-                <h2>{product.name}</h2>
+            {products.map((product)=>{
+              return (
+              ((category=="All"||product.type==category.toLowerCase())&&(product.name.includes(searchTerm.toLowerCase()))&&<section class={product.type}>
+                <h2>{product.name.charAt(0).toUpperCase()+product.name.slice(1)}</h2>
                 <p>${product.price}</p>
                 <img src={`/images/${product.image}`} alt={product.name}/>
-              </section>
+              </section>))}
             )}
             </main>
         </div>
